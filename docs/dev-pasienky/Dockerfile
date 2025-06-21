@@ -1,45 +1,49 @@
-# Stage 1: Build Stage
-FROM node:20-slim AS builder
+# This Dockerfile is in a subdirectory.
+# The build context should be the project root directory.
+# Example build command from the root:
+# docker build -t pasienky-app -f docs/dev-pasienky/Dockerfile .
 
-# Create app directory
+# Stage 1: Build Stage
+FROM node:20 AS builder
+
 WORKDIR /usr/src/app
 
-# Install dependencies
-COPY ../../package*.json ./
+# Copy package files from the root of the build context
+COPY ./package*.json ./
+RUN ls -al
 RUN npm install
 
-# Copy source code
+# Copy all source code from the build context
 COPY . .
 
 # Build the TypeScript project
 RUN npm run build
 
-# Prune development dependencies
+# Prune development dependencies for a smaller image
 RUN npm prune --production
 
 # Stage 2: Production Stage
 FROM node:20-slim
 
-# Set user
-# Create a non-root user and group
+# Create a non-root user for better security
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 appuser
 
 WORKDIR /home/appuser
 
-# Copy built files and dependencies from the builder stage
-COPY --chown=appuser:nodejs --from=builder /usr/src/app/dist ../../dist
-COPY --chown=appuser:nodejs --from=builder /usr/src/app/node_modules ../../node_modules
-COPY --chown=appuser:nodejs --from=builder /usr/src/app/package.json ../../package.json
-COPY --chown=appuser:nodejs --from=builder /usr/src/app/ecosystem.config.js ../../ecosystem.config.js
-COPY --chown=appuser:nodejs --from=builder /usr/src/app/downloads ../../downloads
-COPY --chown=appuser:nodejs --from=builder /usr/src/app/logs ../../logs
+# Copy only the necessary files from the builder stage
+COPY --chown=appuser:nodejs --from=builder /usr/src/app/dist ./dist
+COPY --chown=appuser:nodejs --from=builder /usr/src/app/node_modules ./node_modules
+COPY --chown=appuser:nodejs --from=builder /usr/src/app/package.json .
+COPY --chown=appuser:nodejs --from=builder /usr/src/app/ecosystem.config.js .
 
-# Switch to the non-root user
+# Create and set permissions for volumes
+RUN mkdir -p downloads logs && \
+    chown -R appuser:nodejs downloads logs
+
 USER appuser
 
-# Expose port
 EXPOSE 3000
 
-# Start the application
+# Start the application using pm2-runtime
 CMD [ "npm", "start" ] 
