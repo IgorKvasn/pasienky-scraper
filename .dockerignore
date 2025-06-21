@@ -1,0 +1,15 @@
+node_modules
+dist
+logs
+.git
+.gitignore
+Dockerfile
+.dockerignore
+npm-debug.log*
+.env
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw? 

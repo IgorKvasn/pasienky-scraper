@@ -1,0 +1,40 @@
+{
+  "name": "pasienky",
+  "version": "1.0.0",
+  "description": "Scraper for Pasienky swimming pool schedule",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "pm2-runtime start ecosystem.config.js --env production",
+    "dev": "ts-node src/index.ts",
+    "dev:watch": "nodemon --exec ts-node src/index.ts --watch src --ext ts,js,json",
+    "pm2:start": "pm2 start ecosystem.config.js",
+    "pm2:stop": "pm2 stop pasienky-app",
+    "pm2:restart": "pm2 restart pasienky-app",
+    "pm2:delete": "pm2 delete pasienky-app",
+    "pm2:logs": "pm2 logs pasienky-app",
+    "pm2:monit": "pm2 monit",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^20.11.24",
+    "dotenv": "^16.4.5",
+    "exceljs": "^4.4.0",
+    "express": "^5.1.0",
+    "node-cron": "^3.0.3",
+    "puppeteer": "^22.3.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "xlsx": "^0.18.5",
+    "pm2": "^5.4.0"
+  },
+  "devDependencies": {
+    "@types/node-cron": "^3.0.11",
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.10"
+  }
+}
