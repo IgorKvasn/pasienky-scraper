@@ -4,7 +4,7 @@
 # docker build -t pasienky-app -f docs/dev-pasienky/Dockerfile .
 
 # Stage 1: Build Stage
-FROM node:20 AS builder
+FROM node:20-slim AS builder
 
 WORKDIR /usr/src/app
 
