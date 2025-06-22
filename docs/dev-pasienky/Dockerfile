@@ -4,7 +4,7 @@
 # docker build -t pasienky-app -f docs/dev-pasienky/Dockerfile .
 
 # Stage 1: Build Stage
-FROM node:20-slim AS builder
+FROM arm64v8/node:20.19 AS builder
 
 WORKDIR /usr/src/app
 
@@ -23,7 +23,7 @@ RUN npm run build
 RUN npm prune --production
 
 # Stage 2: Production Stage
-FROM node:20-slim
+FROM arm64v8/node:20.19
 
 # Create a non-root user for better security
 RUN addgroup --system --gid 1001 nodejs
