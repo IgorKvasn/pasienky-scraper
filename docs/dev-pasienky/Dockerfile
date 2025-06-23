@@ -17,6 +17,8 @@ RUN npm run build && npm prune --production
 # Stage 2: Production Stage
 FROM ghcr.io/browserless/chromium:v2.31.1
 
+USER root
+
 # Install Chromium dependencies
 # RUN apt-get update && \
 #     apt-get install -y --no-install-recommends \
