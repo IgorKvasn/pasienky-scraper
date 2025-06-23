@@ -4,7 +4,7 @@
 # docker build -t pasienky-app -f docs/dev-pasienky/Dockerfile .
 
 # Stage 1: Build Stage
-FROM arm64v8/node:22.16 AS builder
+FROM ghcr.io/browserless/chromium:v2.31.1 AS builder
 
 WORKDIR /usr/src/app
 
@@ -15,16 +15,16 @@ COPY . .
 RUN npm run build && npm prune --production
 
 # Stage 2: Production Stage
-FROM arm64v8/node:22.16
+FROM ghcr.io/browserless/chromium:v2.31.1
 
 # Install Chromium dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-      wget ca-certificates fonts-liberation libappindicator3-1 libasound2 \
-      libatk-bridge2.0-0 libatk1.0-0 libcups2 libdbus-1-3 libdrm2 libgbm1 \
-      libgtk-3-0 libnspr4 libnss3 libx11-xcb1 libxcomposite1 libxdamage1 \
-      libxrandr2 xdg-utils && \
-    rm -rf /var/lib/apt/lists/*
+# RUN apt-get update && \
+#     apt-get install -y --no-install-recommends \
+#       wget ca-certificates fonts-liberation libappindicator3-1 libasound2 \
+#       libatk-bridge2.0-0 libatk1.0-0 libcups2 libdbus-1-3 libdrm2 libgbm1 \
+#       libgtk-3-0 libnspr4 libnss3 libx11-xcb1 libxcomposite1 libxdamage1 \
+#       libxrandr2 xdg-utils && \
+#     rm -rf /var/lib/apt/lists/*
 
 # Create appuser and set up directories in one layer
 RUN addgroup --system --gid 1001 nodejs && \
