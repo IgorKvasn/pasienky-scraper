@@ -8,9 +8,11 @@ FROM arm64v8/node:22.16 AS builder
 
 WORKDIR /usr/src/app
 
-USER root
+USER appuser
 # Install dependencies and build
 COPY package*.json ./
+RUN mkdir /cache_p
+ENV PUPPETEER_CACHE_DIR=/cache_p
 RUN npm install
 COPY . .
 RUN npm run build && npm prune --production
@@ -42,6 +44,8 @@ COPY --from=builder --chown=appuser:nodejs /usr/src/app/dist ./dist
 COPY --from=builder --chown=appuser:nodejs /usr/src/app/node_modules ./node_modules
 COPY --from=builder --chown=appuser:nodejs /usr/src/app/package.json .
 COPY --from=builder --chown=appuser:nodejs /usr/src/app/ecosystem.config.js .
+COPY --from=builder --chown=appuser:nodejs /cache_p /home/appuser/.cache/puppeteer
+
 
 ENV HOME=/home/appuser
 ENV PUPPETEER_CACHE_DIR=/home/appuser/.cache/puppeteer

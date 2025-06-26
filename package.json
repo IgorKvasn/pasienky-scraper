@@ -21,7 +21,7 @@
     "express": "^5.1.0",
     "forever": "^4.0.3",
     "node-cron": "^3.0.3",
-    "puppeteer": "^22.3.0",
+    "puppeteer": "^24.10.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3",
     "xlsx": "^0.18.5"
