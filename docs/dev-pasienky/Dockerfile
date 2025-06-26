@@ -4,7 +4,7 @@
 # docker build -t pasienky-app -f docs/dev-pasienky/Dockerfile .
 
 # Stage 1: Build Stage
-FROM amd64/node:22.16 AS builder
+FROM arm64v8/node:22.16 AS builder
 
 WORKDIR /usr/src/app
 
@@ -18,7 +18,7 @@ COPY . .
 RUN npm run build && npm prune --production
 
 # Stage 2: Production Stage
-FROM amd64/node:22.16
+FROM arm64v8/node:22.16
 
 USER root
 
