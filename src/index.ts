@@ -45,9 +45,6 @@ export async function scrapeSchedule() {
         console.log('Creating new page');
         const page = await browser.newPage();
         
-        // Set up download behavior
-        const client = await page.createCDPSession();
-
         // Navigate to the main page
         await page.goto(BASE_URL, { waitUntil: 'networkidle0' });
         console.log('Navigated to the main page');
