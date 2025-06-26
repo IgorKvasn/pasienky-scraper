@@ -23,8 +23,26 @@ export async function scrapeSchedule() {
     `
     user_pref("browser.download.folderList", 2);
     user_pref("browser.download.dir", "${DOWNLOAD_DIR}");
-    user_pref("browser.helperApps.neverAsk.saveToDisk", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel");
+    user_pref("browser.helperApps.neverAsk.saveToDisk", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/octet-stream,application/zip,application/pdf");
+    user_pref("browser.download.manager.showWhenStarting", false);
+    user_pref("browser.download.useDownloadDir", true);
+    user_pref("browser.download.panel.shown", false);
+    user_pref("browser.download.always_ask_before_handling_new_types", false);
     user_pref("pdfjs.disabled", true);
+    user_pref("browser.download.forbid_open_with", true);
+    user_pref("browser.helperApps.alwaysAsk.force", false);
+    user_pref("browser.download.manager.closeWhenDone", true);
+    user_pref("browser.download.manager.focusWhenStarting", false);
+    user_pref("browser.download.manager.alertOnEXEOpen", false);
+    user_pref("browser.download.manager.showAlertOnComplete", false);
+    user_pref("browser.download.manager.useWindow", false);
+    user_pref("browser.download.manager.closeWhenDone", true);
+    user_pref("browser.download.manager.showWhenStarting", false);
+    user_pref("browser.download.manager.retention", 0);
+    user_pref("browser.download.manager.scanWhenDone", false);
+    user_pref("browser.download.manager.skipWinSecurityPolicyChecks", true);
+    user_pref("browser.download.manager.alertOnEXEOpen", false);
+    user_pref("browser.helperApps.neverAsk.openFile", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/octet-stream,application/zip,application/pdf");
     `
     );
 
@@ -103,18 +121,7 @@ export async function scrapeSchedule() {
         // await page.click('div[role="menuitem"]:has-text("Microsoft Excel")');
 
         // Wait for the Excel file to download
-        await new Promise(resolve => setTimeout(resolve, 5000));
-
-        // Find the downloaded Excel file
-        const files = fs.readdirSync(DOWNLOAD_DIR);
-        const excelFile = files.find(file => file.endsWith('.xlsx') || file.endsWith('.xls'));
-
-    
-        if (!excelFile) {
-            throw new Error('Excel file not found in downloads');
-        }
-
-        console.log('Excel file found:', excelFile);
+        const excelFile = await waitForDownload(DOWNLOAD_DIR);
 
         const results = await parseExcel(path.join(DOWNLOAD_DIR, excelFile));
         
@@ -157,3 +164,20 @@ app.listen(PORT, () => {
 scrapeSchedule(); 
 
 // parseExcel('/home/kvasnicka/data/projects/pasienky/downloads/MPP Rozpis.xlsx');
+
+function waitForDownload(timeout = 15000) {
+    return new Promise((resolve, reject) => {
+        const start = Date.now();
+        const interval = setInterval(() => {
+            const files = fs.readdirSync(DOWNLOAD_DIR);
+            const downloaded = files.find(f => f.endsWith('.xlsx') || f.endsWith('.xls'));
+            if (downloaded) {
+                clearInterval(interval);
+                resolve(downloaded);
+            } else if (Date.now() - start > timeout) {
+                clearInterval(interval);
+                reject(new Error('Download timeout'));
+            }
+        }, 500);
+    });
+}
