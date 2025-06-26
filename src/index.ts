@@ -121,7 +121,7 @@ export async function scrapeSchedule() {
         // await page.click('div[role="menuitem"]:has-text("Microsoft Excel")');
 
         // Wait for the Excel file to download
-        const excelFile = await waitForDownload(DOWNLOAD_DIR);
+        const excelFile = await waitForDownload();
 
         const results = await parseExcel(path.join(DOWNLOAD_DIR, excelFile));
         
@@ -165,7 +165,7 @@ scrapeSchedule();
 
 // parseExcel('/home/kvasnicka/data/projects/pasienky/downloads/MPP Rozpis.xlsx');
 
-function waitForDownload(timeout = 15000) {
+function waitForDownload(timeout = 15000): Promise<string> {
     return new Promise((resolve, reject) => {
         const start = Date.now();
         const interval = setInterval(() => {
