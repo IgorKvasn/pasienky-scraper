@@ -4,7 +4,7 @@
 # docker build -t pasienky-app -f docs/dev-pasienky/Dockerfile .
 
 # Stage 1: Build Stage
-FROM ghcr.io/browserless/chromium:v2.31.1 AS builder
+FROM arm64v8/node:22.16 AS builder
 
 WORKDIR /usr/src/app
 
@@ -16,18 +16,18 @@ COPY . .
 RUN npm run build && npm prune --production
 
 # Stage 2: Production Stage
-FROM ghcr.io/browserless/chromium:v2.31.1
+FROM arm64v8/node:22.16
 
 USER root
 
 # Install Chromium dependencies
-# RUN apt-get update && \
-#     apt-get install -y --no-install-recommends \
-#       wget ca-certificates fonts-liberation libappindicator3-1 libasound2 \
-#       libatk-bridge2.0-0 libatk1.0-0 libcups2 libdbus-1-3 libdrm2 libgbm1 \
-#       libgtk-3-0 libnspr4 libnss3 libx11-xcb1 libxcomposite1 libxdamage1 \
-#       libxrandr2 xdg-utils && \
-#     rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      wget ca-certificates fonts-liberation libappindicator3-1 libasound2 \
+      libatk-bridge2.0-0 libatk1.0-0 libcups2 libdbus-1-3 libdrm2 libgbm1 \
+      libgtk-3-0 libnspr4 libnss3 libx11-xcb1 libxcomposite1 libxdamage1 \
+      libxrandr2 xdg-utils && \
+    rm -rf /var/lib/apt/lists/*
 
 # Create appuser and set up directories in one layer
 RUN addgroup --system --gid 1001 nodejs && \
@@ -46,7 +46,7 @@ COPY --from=builder --chown=appuser:nodejs /usr/src/app/ecosystem.config.js .
 ENV HOME=/home/appuser
 ENV PUPPETEER_CACHE_DIR=/home/appuser/.cache/puppeteer
 
-USER blessuser
+USER appuser
 
 EXPOSE 3000
 
