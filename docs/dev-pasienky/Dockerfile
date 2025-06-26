@@ -8,7 +8,7 @@ FROM arm64v8/node:22.16 AS builder
 
 WORKDIR /usr/src/app
 
-USER appuser
+USER root
 # Install dependencies and build
 COPY package*.json ./
 RUN mkdir /cache_p
