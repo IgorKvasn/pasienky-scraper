@@ -8,6 +8,7 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+      - PUPPETEER_PRODUCT=firefox
     restart: unless-stopped
     volumes:
       - ./downloads:/data/downloads

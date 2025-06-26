@@ -16,9 +16,9 @@ if (!fs.existsSync(DOWNLOAD_DIR)) {
 export async function scrapeSchedule() {
     console.log('Starting schedule scraping...');
     const browser = await puppeteer.launch({
-        browser: 'firefox',
         headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        browser: 'firefox'
     });
 
     try {
