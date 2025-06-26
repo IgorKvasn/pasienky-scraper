@@ -18,7 +18,8 @@ export async function scrapeSchedule() {
     const browser = await puppeteer.launch({
         headless: true,
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
-        browser: 'firefox'
+        browser: 'firefox',
+        executablePath: '/usr/bin/firefox',
     });
 
     try {
