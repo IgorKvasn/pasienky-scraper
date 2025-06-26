@@ -90,6 +90,7 @@ export async function scrapeSchedule() {
         await page.click('span[aria-label="Stiahnuť d"]');
 
          await page.waitForSelector('span[aria-label="Microsoft Excel (.xlsx) x"]');
+         console.log('idem stahovat subor');
          await page.click('span[aria-label="Microsoft Excel (.xlsx) x"]');
         
 
