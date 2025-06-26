@@ -8,6 +8,8 @@ FROM ghcr.io/browserless/chromium:v2.31.1 AS builder
 
 WORKDIR /usr/src/app
 
+USER blessuser
+
 # Install dependencies and build
 COPY package*.json ./
 RUN npm install
@@ -45,7 +47,7 @@ COPY --from=builder --chown=appuser:nodejs /usr/src/app/ecosystem.config.js .
 ENV HOME=/home/appuser
 ENV PUPPETEER_CACHE_DIR=/home/appuser/.cache/puppeteer
 
-USER appuser
+USER blessuser
 
 EXPOSE 3000
 
