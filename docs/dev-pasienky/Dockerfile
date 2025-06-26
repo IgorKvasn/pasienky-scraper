@@ -22,10 +22,10 @@ FROM arm64v8/node:22.16
 
 USER root
 
-# Install Chromium dependencies
+# Install Firefox and dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-      wget ca-certificates fonts-liberation libappindicator3-1 libasound2 \
+      firefox-esr wget ca-certificates fonts-liberation libappindicator3-1 libasound2 \
       libatk-bridge2.0-0 libatk1.0-0 libcups2 libdbus-1-3 libdrm2 libgbm1 \
       libgtk-3-0 libnspr4 libnss3 libx11-xcb1 libxcomposite1 libxdamage1 \
       libxrandr2 xdg-utils && \
@@ -45,7 +45,6 @@ COPY --from=builder --chown=appuser:nodejs /usr/src/app/node_modules ./node_modu
 COPY --from=builder --chown=appuser:nodejs /usr/src/app/package.json .
 COPY --from=builder --chown=appuser:nodejs /usr/src/app/ecosystem.config.js .
 COPY --from=builder --chown=appuser:nodejs /cache_p /home/appuser/.cache/puppeteer
-
 
 ENV HOME=/home/appuser
 ENV PUPPETEER_CACHE_DIR=/home/appuser/.cache/puppeteer
