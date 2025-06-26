@@ -9,7 +9,7 @@ FROM ghcr.io/browserless/chromium:v2.31.1 AS builder
 WORKDIR /usr/src/app
 
 USER blessuser
-
+RUN chown -R blessuser:nodejs *
 # Install dependencies and build
 COPY package*.json ./
 RUN npm install
