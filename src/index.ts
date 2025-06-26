@@ -7,6 +7,7 @@ import { app, PORT } from './api';
 
 const BASE_URL = 'https://www.starz.sk/mestska-plavaren-pasienky/os-1002';
 const DOWNLOAD_DIR = path.join(__dirname, '../downloads');
+const FIREFOX_USER_DATA_DIR = '/tmp/firefox-profile';
 
 // Ensure download directory exists
 if (!fs.existsSync(DOWNLOAD_DIR)) {
@@ -15,11 +16,29 @@ if (!fs.existsSync(DOWNLOAD_DIR)) {
 
 export async function scrapeSchedule() {
     console.log('Starting schedule scraping...');
+    // Create the profile directory and set preferences
+    fs.mkdirSync(FIREFOX_USER_DATA_DIR, { recursive: true });
+    fs.writeFileSync(
+    path.join(FIREFOX_USER_DATA_DIR, 'user.js'),
+    `
+    user_pref("browser.download.folderList", 2);
+    user_pref("browser.download.dir", "${DOWNLOAD_DIR}");
+    user_pref("browser.helperApps.neverAsk.saveToDisk", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel");
+    user_pref("pdfjs.disabled", true);
+    `
+    );
+
     const browser = await puppeteer.launch({
         headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
         browser: 'firefox',
         executablePath: '/usr/bin/firefox',
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--window-size=1920,1080',
+            // Set Firefox preferences for downloads
+            '-profile', FIREFOX_USER_DATA_DIR,
+        ],
     });
 
     try {
@@ -28,10 +47,6 @@ export async function scrapeSchedule() {
         
         // Set up download behavior
         const client = await page.createCDPSession();
-        await client.send('Page.setDownloadBehavior', {
-            behavior: 'allow',
-            downloadPath: DOWNLOAD_DIR
-        });
 
         // Navigate to the main page
         await page.goto(BASE_URL, { waitUntil: 'networkidle0' });
