@@ -15,3 +15,11 @@ services:
       - ./logs:/data/logs 
     security_opt:
       - seccomp=unconfined
+    networks:
+      - net0    
+
+networks:
+  net0:
+    #    docker network create --driver overlay --attachable --subnet=192.168.70.0/24 net0
+    #external: true
+    name: net0
